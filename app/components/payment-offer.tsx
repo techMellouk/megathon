@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Download, Loader2, Sparkles, Trophy } from "lucide-react";
+import { Flag, Gauge, Loader2, Trophy } from "lucide-react";
 import DisplayCards from "@/components/ui/display-cards";
 import { PAYMENT_ID_KEY } from "@/lib/payments";
 import { getErrorMessage } from "@/lib/utils";
@@ -61,17 +61,17 @@ export function PaymentOffer({ modelUrl, prompt }: PaymentOfferProps) {
           {
             className:
               "[grid-area:stack] grayscale-100 hover:-translate-y-8 hover:grayscale-0 before:absolute before:left-0 before:top-0 before:h-full before:w-full before:rounded-xl before:bg-[#07080c]/50 before:content-[''] before:transition-opacity before:duration-700 hover:before:opacity-0",
-            icon: <Sparkles className="size-4 text-blue-300" />,
-            title: "Model ready",
-            description: prompt ? prompt.slice(0, 42) + (prompt.length > 42 ? "…" : "") : "Your 3D model",
+            icon: <Gauge className="size-4 text-blue-300" />,
+            title: "Car ready",
+            description: prompt ? prompt.slice(0, 42) + (prompt.length > 42 ? "…" : "") : "Your race car",
             date: "Preview unlocked",
           },
           {
             className:
               "[grid-area:stack] translate-x-10 translate-y-8 grayscale-100 hover:-translate-y-1 hover:grayscale-0 before:absolute before:left-0 before:top-0 before:h-full before:w-full before:rounded-xl before:bg-[#07080c]/50 before:content-[''] before:transition-opacity before:duration-700 hover:before:opacity-0",
-            icon: <Download className="size-4 text-emerald-300" />,
-            title: "Download file",
-            description: "GLB export included",
+            icon: <Trophy className="size-4 text-emerald-300" />,
+            title: "Race 3 rivals",
+            description: "3 laps, live ranking, finish line",
             date: "Pay once to unlock",
           },
           {
@@ -79,10 +79,10 @@ export function PaymentOffer({ modelUrl, prompt }: PaymentOfferProps) {
             icon: loading ? (
               <Loader2 className="size-4 animate-spin text-amber-300" />
             ) : (
-              <Trophy className="size-4 text-amber-300" />
+              <Flag className="size-4 text-amber-300" />
             ),
-            title: loading ? "Redirecting…" : "Pay & download",
-            description: loading ? "Opening Mollie checkout" : "Tap to unlock your file",
+            title: loading ? "Redirecting…" : "Pay & race",
+            description: loading ? "Opening Mollie checkout" : "Tap to hit the track",
             date: "Test payment",
             titleClassName: "text-amber-300",
             onClick: startPayment,

@@ -92,15 +92,16 @@ export default function ModelStudio() {
             <div className="prompt-stack">
               <div className="hero-heading">
                 <LinkedInButton />
-                <h1 className="hero-title">What should we build?</h1>
+                <h1 className="hero-title">THE MEGATHON RACE</h1>
                 <p className="hero-subtitle">
-                  Describe an object and watch it become a textured 3D model.
+                  Generate the car that lets you win the race. Describe your dream
+                  racer — we build it in 3D, then you take it to the track.
                 </p>
               </div>
 
               <PromptInputBox
                 onSend={runGeneration}
-                placeholder="A sculptural speaker of smoked glass, black steel ribs, copper mesh…"
+                placeholder="A low, aggressive neon street racer with a carbon wing…"
               />
 
               {status === "error" && error ? (
@@ -186,7 +187,7 @@ export default function ModelStudio() {
                 placeholder={
                   submittedPrompt
                     ? `Refine: ${submittedPrompt}`
-                    : "Describe a change or a new object…"
+                    : "Tweak your race car or describe a new one…"
                 }
               />
             </div>

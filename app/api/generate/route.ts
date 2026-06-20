@@ -7,8 +7,10 @@ import { jsonError, jsonSuccess } from "@/lib/api-response";
 
 export const runtime = "nodejs";
 
-const MODEL = "wavespeed-ai/meshy6/text-to-3d";
+const MODEL = "wavespeed-ai/hunyuan-3d-v3.1/text-to-3d-rapid";
 const MAX_PROMPT_LENGTH = 600;
+// Hunyuan rapid accepts a single prompt, max 200 UTF-8 characters.
+const HUNYUAN_PROMPT_LIMIT = 200;
 
 type GenerationBody = {
   prompt?: unknown;
@@ -125,20 +127,10 @@ export async function POST(request: Request) {
     const result = await client.run(
       MODEL,
       {
-        art_style: "realistic",
-        enable_pbr: true,
-        enable_prompt_expansion: true,
-        prompt,
-        should_remesh: true,
-        symmetry_mode: "auto",
-        ta_pose: false,
-        target_polycount: 30000,
-        texture_prompt:
-          "high resolution PBR materials, crisp surface detail, realistic roughness, clean UVs, studio quality texture maps",
-        topology: "triangle",
+        prompt: prompt.slice(0, HUNYUAN_PROMPT_LIMIT),
       },
       {
-        pollInterval: 3,
+        pollInterval: 2,
         timeout: 900,
       },
     );

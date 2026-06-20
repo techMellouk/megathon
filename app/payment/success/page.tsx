@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { CheckCircle2, Download, Loader2, XCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { CheckCircle2, Download, Flag, Loader2, XCircle } from "lucide-react";
 import { PAYMENT_ID_KEY } from "@/lib/payments";
+import { createRaceSession } from "@/lib/raceSession";
 import { getErrorMessage } from "@/lib/utils";
 
 type VerifyResponse = {
@@ -17,9 +19,12 @@ type VerifyResponse = {
 };
 
 export default function PaymentSuccessPage() {
+  const router = useRouter();
   const [state, setState] = useState<"loading" | "paid" | "pending" | "error">("loading");
   const [data, setData] = useState<VerifyResponse | null>(null);
   const [message, setMessage] = useState("Verifying your payment…");
+  const [raceUrl, setRaceUrl] = useState<string | null>(null);
+  const startedRef = useRef(false);
 
   useEffect(() => {
     async function verify() {
@@ -31,7 +36,7 @@ export default function PaymentSuccessPage() {
 
       if (!paymentId) {
         setState("error");
-        setMessage("No payment reference found. Start checkout from your generated model.");
+        setMessage("No payment reference found. Start checkout from your generated car.");
         return;
       }
 
@@ -47,10 +52,18 @@ export default function PaymentSuccessPage() {
 
         setData(result);
 
-        if (result.paid) {
+        if (result.paid && result.modelId) {
           setState("paid");
-          setMessage("Payment successful. Your download is ready.");
+          setMessage("Payment confirmed. Your car is heading to the grid…");
           sessionStorage.removeItem(PAYMENT_ID_KEY);
+          const session = createRaceSession({
+            modelId: result.modelId,
+            paymentId,
+            paid: true,
+          });
+          setRaceUrl(
+            `/race/${session.raceSessionId}?modelId=${encodeURIComponent(result.modelId)}`,
+          );
           return;
         }
 
@@ -69,6 +82,14 @@ export default function PaymentSuccessPage() {
     void verify();
   }, []);
 
+  // Auto-launch the race shortly after a successful payment.
+  useEffect(() => {
+    if (state !== "paid" || !raceUrl || startedRef.current) return;
+    startedRef.current = true;
+    const t = setTimeout(() => router.push(raceUrl), 2200);
+    return () => clearTimeout(t);
+  }, [state, raceUrl, router]);
+
   const downloadUrl = data?.downloadUrl;
   const format = (data?.format ?? "glb").toUpperCase();
 
@@ -84,7 +105,11 @@ export default function PaymentSuccessPage() {
         )}
 
         <h1 className="payment-success-title">
-          {state === "paid" ? "Payment successful" : state === "loading" ? "Checking payment" : "Payment pending"}
+          {state === "paid"
+            ? "You're in the race"
+            : state === "loading"
+              ? "Checking payment"
+              : "Payment pending"}
         </h1>
         <p className="payment-success-message">{message}</p>
 
@@ -92,20 +117,26 @@ export default function PaymentSuccessPage() {
           <p className="payment-success-prompt">&ldquo;{data.prompt}&rdquo;</p>
         ) : null}
 
-        {state === "paid" && downloadUrl ? (
+        {state === "paid" && raceUrl ? (
           <div className="payment-success-actions">
-            <a className="payment-download-button" href={downloadUrl} download>
-              <Download size={18} />
-              Download {format}
-            </a>
-            <p className="payment-success-note">
-              WaveSpeed exports GLB models. STL conversion is not included in this test flow yet.
-            </p>
+            <button
+              className="payment-download-button"
+              onClick={() => router.push(raceUrl)}
+              type="button"
+            >
+              <Flag size={18} />
+              Start the race
+            </button>
+            {downloadUrl ? (
+              <a className="payment-back-link" href={downloadUrl} download>
+                <Download size={15} /> Or download the {format} file
+              </a>
+            ) : null}
           </div>
         ) : null}
 
         <Link className="payment-back-link" href="/">
-          Back to Mesh Studio
+          Back to studio
         </Link>
       </div>
     </main>
