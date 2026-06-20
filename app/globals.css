@@ -356,4 +356,122 @@ button {
     bottom: 14px;
     width: calc(100% - 28px);
   }
+
+  .payment-offer {
+    right: 8px;
+    bottom: 96px;
+    transform: scale(0.72);
+    transform-origin: bottom right;
+  }
+}
+
+/* ---------- Payment offer (bottom-right cards) ---------- */
+
+.payment-offer {
+  position: absolute;
+  right: 20px;
+  bottom: 120px;
+  z-index: 4;
+  transform: scale(0.82);
+  transform-origin: bottom right;
+}
+
+.payment-offer-error {
+  margin-top: 10px;
+  max-width: 18rem;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 106, 69, 0.35);
+  background: rgba(255, 96, 69, 0.12);
+  color: #ffd6cd;
+  font-size: 0.82rem;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+/* ---------- Payment success screen ---------- */
+
+.payment-success-screen {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.payment-success-card {
+  width: min(100%, 520px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(12, 13, 18, 0.72);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+  padding: 28px 24px;
+  text-align: center;
+}
+
+.payment-success-icon {
+  width: 42px;
+  height: 42px;
+  margin: 0 auto 14px;
+}
+
+.payment-success-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #f7f2ea;
+  margin-bottom: 8px;
+}
+
+.payment-success-message {
+  color: #a7a39c;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.payment-success-prompt {
+  color: rgba(247, 242, 234, 0.85);
+  font-size: 0.95rem;
+  font-style: italic;
+  margin-bottom: 18px;
+}
+
+.payment-success-actions {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.payment-download-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  background: #fff;
+  color: #111;
+  font-weight: 600;
+  padding: 12px 18px;
+  text-decoration: none;
+  transition: transform 180ms ease, background 180ms ease;
+}
+
+.payment-download-button:hover {
+  background: rgba(255, 255, 255, 0.88);
+  transform: translateY(-1px);
+}
+
+.payment-success-note {
+  color: #8f8b84;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.payment-back-link {
+  color: #68d8ff;
+  font-size: 0.92rem;
+  text-decoration: none;
+}
+
+.payment-back-link:hover {
+  text-decoration: underline;
 }

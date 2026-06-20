@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import ModelScene from "./model-scene";
 import { GeneratingLoader } from "./generating-loader";
 import { LinkedInButton } from "./linkedin-button";
+import { PaymentOffer } from "./payment-offer";
 import { PromptInputBox } from "@/components/ui/ai-prompt-box";
 import { getErrorMessage } from "@/lib/utils";
 import { fadeBlurIn, fadeIn, scaleBlurIn } from "@/lib/motion";
@@ -189,6 +190,10 @@ export default function ModelStudio() {
                 }
               />
             </div>
+
+            {status === "ready" && modelUrl ? (
+              <PaymentOffer modelUrl={modelUrl} prompt={submittedPrompt} />
+            ) : null}
           </motion.section>
         )}
       </AnimatePresence>
