@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import RaceScene from "@/app/components/race/RaceScene";
 import RaceHud from "@/app/components/race/RaceHud";
 import { useRaceState } from "@/app/components/race/useRaceState";
+import { useRaceSoundtrack } from "@/app/components/race/useRaceSoundtrack";
 
 type Props = {
   raceSessionId: string;
@@ -25,6 +26,8 @@ export default function RaceClient({ modelId }: Props) {
     reportProgress,
     finishRace,
   } = useRaceState();
+
+  useRaceSoundtrack(phase);
 
   // Memoize the 3D subtree so frequent HUD updates (speed/lap/rank) don't
   // re-render the canvas. It only rebuilds when modelId or phase changes.
