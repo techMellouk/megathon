@@ -242,9 +242,12 @@ export default function RaceScene({ modelId, phase, onReport, onFinish }: Props)
         player.vz -= (player.vz / speed) * dragMag;
       }
 
-      // Steering (scaled by speed, reversed when going backwards).
+      // Steering (scaled by speed, reversed when going backwards). A small
+      // low-speed authority floor lets the car pivot off a wall instead of
+      // deadlocking when it stops square against it. Above ~9 mph the floor is
+      // irrelevant, so normal handling is unchanged.
       steerInput = (c.left ? 1 : 0) - (c.right ? 1 : 0);
-      const speedFactor = Math.min(speed / 12, 1);
+      const speedFactor = Math.max(Math.min(speed / 12, 1), 0.35);
       const dir = forwardSpeed >= 0 ? 1 : -1;
       player.heading += steerInput * STEER_RATE * dt * speedFactor * dir;
 
