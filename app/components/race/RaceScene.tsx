@@ -13,8 +13,10 @@ import type { LeaderboardEntry, RacePhase } from "./useRaceState";
 import {
   TRACK_LENGTH,
   TOTAL_LAPS,
+  ROAD_WIDTH,
   pointAtDistance,
   progressFromPosition,
+  projectOnTrack,
   headingFromTangent,
 } from "./trackPath";
 
@@ -27,6 +29,9 @@ const ROLL_DRAG = 0.25; // linear rolling resistance
 const MAX_SPEED = 112; // hard clamp
 const STEER_RATE = 2.0; // rad/s at speed
 const GRIP = 3.2; // how fast lateral slide is killed (higher = more grip)
+// Invisible barriers at the road edge keep the car on the tarmac (can't drive
+// off into the stadium). Limit is measured from the centerline to the car center.
+const TRACK_HALF_LIMIT = ROAD_WIDTH / 2 - 1.5;
 
 // --- Chase camera (low + close, looking ahead down the track) ---
 const CAM_DIST = 18;
@@ -263,6 +268,21 @@ export default function RaceScene({ modelId, phase, onReport, onFinish }: Props)
       player.forwardSpeed = player.vx * fx + player.vz * fz;
       player.posX += player.vx * dt;
       player.posZ += player.vz * dt;
+
+      // Track boundaries: clamp the car to the road and scrub off the velocity
+      // pushing it past the edge so it slides along an invisible wall.
+      const proj = projectOnTrack(player.posX, player.posZ);
+      if (Math.abs(proj.lateral) > TRACK_HALF_LIMIT) {
+        const sign = proj.lateral < 0 ? -1 : 1;
+        const over = proj.lateral - sign * TRACK_HALF_LIMIT;
+        player.posX -= proj.nx * over;
+        player.posZ -= proj.nz * over;
+        const vn = player.vx * proj.nx + player.vz * proj.nz;
+        if (vn * sign > 0) {
+          player.vx -= proj.nx * vn;
+          player.vz -= proj.nz * vn;
+        }
+      }
 
       // Lap tracking via progress wrap.
       const p = progressFromPosition(player.posX, player.posZ);

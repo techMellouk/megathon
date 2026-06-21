@@ -118,6 +118,41 @@ export function progressFromPosition(x: number, z: number): number {
   return best / SAMPLE_COUNT;
 }
 
+export type TrackProjection = {
+  /** Closest centerline point. */
+  cx: number;
+  cz: number;
+  /** Unit road normal (tangent rotated -90deg) at that point. */
+  nx: number;
+  nz: number;
+  /** Signed perpendicular distance from the centerline (along the normal). */
+  lateral: number;
+};
+
+/**
+ * Project an arbitrary world position onto the track centerline and report how
+ * far off-center it is. Used to keep cars inside the road boundaries.
+ */
+export function projectOnTrack(x: number, z: number): TrackProjection {
+  let best = 0;
+  let bestD = Infinity;
+  for (let i = 0; i < SAMPLE_COUNT; i++) {
+    const s = UNIFORM_SAMPLES[i];
+    const dx = x - s.x;
+    const dz = z - s.z;
+    const d2 = dx * dx + dz * dz;
+    if (d2 < bestD) {
+      bestD = d2;
+      best = i;
+    }
+  }
+  const s = UNIFORM_SAMPLES[best];
+  const nx = s.tz;
+  const nz = -s.tx;
+  const lateral = (x - s.x) * nx + (z - s.z) * nz;
+  return { cx: s.x, cz: s.z, nx, nz, lateral };
+}
+
 /** Yaw (rotation about +Y) so that local +Z points along the tangent. */
 export function headingFromTangent(tx: number, tz: number): number {
   return Math.atan2(tx, tz);
